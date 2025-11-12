@@ -19,6 +19,7 @@
 
         <module>user-auth-service</module>
 
+        <module>search-service</module>
     </modules>
 
 </project>

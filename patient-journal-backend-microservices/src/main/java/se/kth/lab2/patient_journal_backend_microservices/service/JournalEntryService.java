@@ -1,8 +1,10 @@
 package se.kth.lab2.patient_journal_backend_microservices.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import se.kth.lab2.patient_journal_backend_microservices.config.RabbitMQConfig;
 import se.kth.lab2.patient_journal_backend_microservices.dto.JournalEntryDTO;
 import se.kth.lab2.patient_journal_backend_microservices.entity.JournalEntry;
 import se.kth.lab2.patient_journal_backend_microservices.entity.Patient;
@@ -19,6 +21,7 @@ public class JournalEntryService {
 
     private final JournalEntryRepository journalEntryRepository;
     private final PatientRepository patientRepository;
+    private final RabbitTemplate rabbitTemplate;
 
     public JournalEntryDTO createJournalEntry(JournalEntryDTO journalEntryDTO) {
         Patient patient = patientRepository.findById(journalEntryDTO.getPatientId())
@@ -26,7 +29,12 @@ public class JournalEntryService {
 
         JournalEntry journalEntry = convertToEntity(journalEntryDTO, patient);
         JournalEntry savedEntry = journalEntryRepository.save(journalEntry);
-        return convertToDTO(savedEntry);
+
+        JournalEntryDTO dto = convertToDTO(savedEntry);
+
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY_JOURNAL, dto);
+
+        return dto;
     }
 
     public JournalEntryDTO getJournalEntryById(Long id) {
@@ -59,7 +67,11 @@ public class JournalEntryService {
         entry.setTreatment(journalEntryDTO.getTreatment());
 
         JournalEntry updatedEntry = journalEntryRepository.save(entry);
-        return convertToDTO(updatedEntry);
+        JournalEntryDTO dto = convertToDTO(updatedEntry);
+
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY_JOURNAL, dto);
+
+        return dto;
     }
 
     public void deleteJournalEntry(Long id) {

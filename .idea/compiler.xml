@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="search-service" />
       </profile>
       <profile name="Annotation profile for Patient Journal Monorepo" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -27,6 +28,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="message-service" options="-parameters" />
       <module name="patient-journal-backend-microservices" options="-parameters" />
+      <module name="search-service" options="-parameters" />
       <module name="user-auth-service" options="-parameters" />
     </option>
   </component>

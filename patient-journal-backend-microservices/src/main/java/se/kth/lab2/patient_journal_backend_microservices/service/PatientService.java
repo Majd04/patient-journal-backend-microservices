@@ -1,8 +1,10 @@
 package se.kth.lab2.patient_journal_backend_microservices.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import se.kth.lab2.patient_journal_backend_microservices.config.RabbitMQConfig;
 import se.kth.lab2.patient_journal_backend_microservices.dto.PatientDTO;
 import se.kth.lab2.patient_journal_backend_microservices.entity.Patient;
 import se.kth.lab2.patient_journal_backend_microservices.repository.PatientRepository;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 public class PatientService {
 
     private final PatientRepository patientRepository;
+    private final RabbitTemplate rabbitTemplate;
 
     public PatientDTO createPatient(PatientDTO patientDTO) {
         if (patientRepository.existsByPersonalNumber(patientDTO.getPersonalNumber())) {
@@ -24,7 +27,10 @@ public class PatientService {
 
         Patient patient = convertToEntity(patientDTO);
         Patient savedPatient = patientRepository.save(patient);
-        return convertToDTO(savedPatient);
+        PatientDTO dto = convertToDTO(savedPatient);
+
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY_PATIENT, dto);
+        return dto;
     }
 
     public PatientDTO getPatientById(Long id) {
