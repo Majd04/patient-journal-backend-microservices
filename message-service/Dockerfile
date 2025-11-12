@@ -31,7 +31,7 @@ WORKDIR /app
 # Detta kommer att kopiera message-service-0.0.1-SNAPSHOT.jar
 COPY --from=build /app/target/*.jar app.jar
 
-# Expose port (8081 för denna tjänst)
+# Expose port
 EXPOSE 8081
 
 # Run the application
