@@ -6,8 +6,8 @@ WORKDIR /app
 COPY .mvn .mvn
 COPY mvnw pom.xml ./
 
-# Make mvnw executable
-RUN chmod +x mvnw
+# Fix line endings and make mvnw executable
+RUN sed -i 's/\r$//' mvnw && chmod +x mvnw
 
 # Download dependencies
 RUN ./mvnw dependency:go-offline -B || true
@@ -28,7 +28,6 @@ USER spring:spring
 WORKDIR /app
 
 # Copy jar from build stage
-# Detta kommer att kopiera message-service-0.0.1-SNAPSHOT.jar
 COPY --from=build /app/target/*.jar app.jar
 
 # Expose port

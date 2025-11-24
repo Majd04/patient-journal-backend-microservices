@@ -36,4 +36,4 @@ spec:
             - name: SPRING_JPA_HIBERNATE_DDL_AUTO
               value: "update"
             - name: APP_JWT_SECRET
-              value: "sEnMycketLangOchSakerHemligNyckelForHS512SomArMinst64TeckenLangForAttUndvikaDettaFel-DuKanHittaPaEnEgenOcksa"
+              value: "EnMycketLangOchSakerHemligNyckelForHS512SomArMinst64TeckenLangForAttUndvikaDettaFel-DuKanHittaPaEnEgenOcksa"

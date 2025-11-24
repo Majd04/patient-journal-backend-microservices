@@ -6,8 +6,8 @@ WORKDIR /app
 COPY .mvn .mvn
 COPY mvnw pom.xml ./
 
-# Make mvnw executable
-RUN chmod +x mvnw
+# Fix line endings and make mvnw executable
+RUN sed -i 's/\r$//' mvnw && chmod +x mvnw
 
 # Download dependencies
 RUN ./mvnw dependency:go-offline -B || true
@@ -31,7 +31,7 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 # Expose port
-EXPOSE 8080
+EXPOSE 8082
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
